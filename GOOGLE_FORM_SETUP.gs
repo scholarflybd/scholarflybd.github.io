@@ -83,7 +83,39 @@ function createScholarFlyAssessmentForm() {
 
   var sheet=SpreadsheetApp.create('ScholarFly BD | Student Assessment Responses');
   form.setDestination(FormApp.DestinationType.SPREADSHEET,sheet.getId());
+  // Installable trigger: runs only when the owner authorizes this script.
+  // The trigger sends an email notification; full personal responses remain in the private Sheet.
+  ScriptApp.newTrigger('notifyScholarFlyAssessment').forForm(form).onFormSubmit().create();
   Logger.log('FORM (student): '+form.getPublishedUrl());
   Logger.log('FORM (edit): '+form.getEditUrl());
   Logger.log('PRIVATE RESPONSE SHEET: '+sheet.getUrl());
+}
+
+
+/**
+ * Email notification for newly submitted student profiles.
+ * Requires the form creator to authorize Gmail/MailApp when running setup.
+ */
+function notifyScholarFlyAssessment(e) {
+  var answers = (e && e.response) ? e.response.getItemResponses() : [];
+  var get = function(title) {
+    var found = answers.find(function(x){ return x.getItem().getTitle()===title; });
+    return found ? String(found.getResponse()) : '';
+  };
+  var applicantName = get('Full name (as in your academic certificates)') || 'New applicant';
+  var applicantEmail = get('Email address');
+  var degree = get('Target programme') || 'Not specified';
+  var recipient = 'scholarflybd@gmail.com';
+  var msg = 'A new ScholarFly BD profile assessment has been submitted.\n\n' +
+    'Applicant: '+applicantName+'\n' +
+    'Email: '+applicantEmail+'\n' +
+    'Target programme: '+degree+'\n\n' +
+    'Please review all answers in the private Google Sheets response spreadsheet.\n' +
+    'Do not forward student personal information without a lawful basis.\n';
+  MailApp.sendEmail(recipient,'New ScholarFly BD assessment: '+applicantName,msg);
+  // Send acknowledgement if the student supplied an email. Does not imply assessment completion.
+  if (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(applicantEmail)) {
+    MailApp.sendEmail(applicantEmail,'ScholarFly BD | Assessment received',
+      'Hello '+applicantName+',\n\nThank you for submitting your academic profile to ScholarFly BD. Your information has been received for review. We will contact you if any additional information is needed.\n\nBest regards,\nScholarFly BD\nscholarflybd@gmail.com');
+  }
 }
