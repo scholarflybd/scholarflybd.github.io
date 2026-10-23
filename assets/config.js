@@ -1,4 +1,4 @@
-// Paste your published Google Forms responder URL here.
+// After creating your Google Form, paste its public responder URL between the quotes.
 window.SCHOLARFLY_FORM_URL = "";
-// Set to the verified WhatsApp number in international digits, e.g. 821021824935
+// Verify the international WhatsApp number before enabling the direct link. Example for +82 10-2182-4935:
 window.SCHOLARFLY_WHATSAPP = "";
