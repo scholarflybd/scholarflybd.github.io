@@ -1,1 +1,32 @@
-document.addEventListener('DOMContentLoaded',()=>{const menu=document.querySelector('.menu-btn, .mobile-btn'),nav=document.querySelector('.navlinks');menu?.addEventListener('click',()=>{let open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));});const form=(window.SCHOLARFLY_FORM_URL||'').trim(),wa=(window.SCHOLARFLY_WHATSAPP||'').trim();document.querySelectorAll('[data-form-link]').forEach(a=>{if(/^https:\/\//.test(form)){a.href=form;a.target='_blank';a.rel='noopener noreferrer';}else{a.href='assessment.html';}});const assessmentReady=document.querySelector('#form-ready'),assessmentPending=document.querySelector('#form-pending'),assessmentButton=document.querySelector('#form-btn'),assessmentEmbed=document.querySelector('#form-embed'),assessmentFrame=document.querySelector('#form-frame');if(assessmentReady&&/^https:\/\/docs\.google\.com\/forms\//.test(form)){assessmentReady.hidden=false;if(assessmentPending)assessmentPending.hidden=true;if(assessmentButton)assessmentButton.href=form;if(assessmentEmbed&&assessmentFrame){assessmentEmbed.hidden=false;const embed=form.replace(/\/viewform(\?.*)?$/,'/viewform?embedded=true');assessmentFrame.src=embed;assessmentFrame.style.width='100%';assessmentFrame.style.border='0';}}if(form){document.querySelector('#form-notice')?.remove();}document.querySelectorAll('[data-whatsapp]').forEach(a=>{if(/^\d{10,15}$/.test(wa)){a.href='https://wa.me/'+wa;a.target='_blank';a.rel='noopener noreferrer';}else{a.href='mailto:scholarflybd@gmail.com?subject=ScholarFly%20BD%20WhatsApp%20enquiry';a.title='WhatsApp link pending number confirmation';}});const el=document.querySelector('#scholarship-filters');if(el){const q=document.querySelector('#search'),region=document.querySelector('#region'),funding=document.querySelector('#funding'),cards=[...document.querySelectorAll('.scholarship-card')],count=document.querySelector('#count'),empty=document.querySelector('#no-results');const params=new URLSearchParams(location.search);if(params.get('country'))q.value=params.get('country');const update=()=>{let n=0;for(const c of cards){const r=region.value==='all'||c.dataset.region.toLowerCase().includes(region.value.toLowerCase()),t=funding.value==='all'||c.dataset.type.includes(funding.value),s=(c.dataset.search||'').includes(q.value.toLowerCase().trim());c.classList.toggle('hidden',!(r&&t&&s));if(r&&t&&s)n++}count.textContent=n+' destination'+(n===1?'':'s');empty.hidden=n!==0;};[q,region,funding].forEach(v=>v.addEventListener('input',update));update();}const year=document.querySelector('#year');if(year)year.textContent=new Date().getFullYear();});
+document.addEventListener('DOMContentLoaded', () => {
+  const menu = document.querySelector('.menu-btn, .mobile-btn');
+  const nav = document.querySelector('.navlinks');
+  if (menu && nav) {
+    const close = () => { nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); };
+    menu.addEventListener('click', () => menu.setAttribute('aria-expanded', String(nav.classList.toggle('open'))));
+    nav.addEventListener('click', e => { if (e.target.closest('a')) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && nav.classList.contains('open')) { close(); menu.focus(); } });
+  }
+  const year = document.querySelector('#year');
+  if (year) year.textContent = new Date().getFullYear();
+  const form = (window.SCHOLARFLY_FORM_URL || '').trim();
+  const wa = (window.SCHOLARFLY_WHATSAPP || '').trim();
+  if (/^\d{10,15}$/.test(wa)) document.querySelectorAll('[data-wa-btn], [data-whatsapp]').forEach(a => {
+    a.href = 'https://wa.me/' + wa; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  });
+  if (!/^https:\/\/docs\.google\.com\/forms\/d\/e\/[\w-]+\/viewform$/.test(form)) return;
+  const url = new URL(form);
+  const params = new URLSearchParams(location.search);
+  const degrees = { bachelors: 'Bachelor’s', masters: 'Master’s', integrated: 'Integrated MS/PhD', phd: 'PhD', postdoc: 'Postdoctoral research' };
+  const countries = { usa: 'USA', canada: 'Canada', uk: 'UK', germany: 'Germany', korea: 'South Korea', japan: 'Japan', australia: 'Australia', other: 'Other', open: 'Not decided' };
+  // Google Form entry IDs observed on the published assessment form.
+  if (degrees[params.get('degree')]) url.searchParams.set('entry.2091546555', degrees[params.get('degree')]);
+  if (countries[params.get('country')]) url.searchParams.set('entry.623930491', countries[params.get('country')]);
+  if (url.search) url.searchParams.set('usp', 'pp_url');
+  document.querySelectorAll('[data-form-link], .standalone-link, .form-fallback a').forEach(a => {
+    a.href = url.href; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  });
+  const frame = document.querySelector('#form-frame');
+  if (frame && url.search) { url.searchParams.set('embedded', 'true'); frame.src = url.href; }
+});
+

@@ -1,25 +1,25 @@
-# ScholarFly BD website (GitHub Pages)
+# ScholarFly BD
 
-Static site: HTML, CSS, vanilla JS. No backend, no build step needed to deploy.
+Production website: https://scholarflybd.com/
 
-## Upload
-Upload everything in this folder (including `CNAME`, `.nojekyll` and `assets/`) to the root of the `scholarflybd.github.io` repository, replacing old files. Keep `CNAME` as is. DNS and HTTPS stay unchanged.
+Static HTML, CSS and JavaScript deployed from this repository through GitHub Pages. The active public pages are the root HTML files and their assets/ dependencies. Keep CNAME and .nojekyll intact.
 
-## What to edit
-- `assets/config.js`: Google Form link and WhatsApp number (the only settings).
-- `assets/data.js`: scholarship directory. Each programme has name, provider, type, levels (B/M/P/D), coverage and official url. Add a country by copying one block. (`build.py` regenerates pages and data; optional.)
+## Assessment
 
-## Connect the Google Form
-1. Go to script.google.com > New project, paste `apps-script/create_form.gs`, run `createScholarFlyForm` and approve permissions.
-2. Open Execution log: copy the responder link into `formUrl` in `assets/config.js`; commit.
-3. In the Form editor, add file-upload questions (CV PDF, transcripts) in section H. Uploads need Google sign-in.
-4. Keep the response Sheet private. Never share it or commit it.
-5. Submit a test response and check the Sheet, emails and confirmation message before announcing the form.
+The live Google Form is embedded in assessment.html and also linked directly for browsers that block embeds. The public responder URL is configured in assets/config.js. Responses are owned by scholarflybd@gmail.com and linked to a private Google Sheet. An installable Apps Script form-submit trigger emails the owner a notification; applicant answers are not copied to the email. Applicant email receipts are not enabled.
 
-## WhatsApp
-The number 01021824935 has a 010 prefix, which matches South Korean mobile numbers (+82). Confirm the country code, then set `whatsapp` (digits only, e.g. 82...). Leave empty until sure.
+Never commit response data, private Sheet links, CVs, credentials or script property values. Do not rerun legacy GOOGLE_FORM_SETUP.gs to create duplicate forms. Maintain the existing ScholarFly BD Student Assessment Apps Script project instead.
 
-## Before launch
-- Verify every scholarship on its official site; add deadlines and verification dates.
-- Review Privacy Policy and Terms with a qualified adviser; set a retention period.
-- Add real team profiles and photos you have rights to use.
+## Maintenance
+
+- Edit root HTML pages for content.
+- assets/style.css controls responsive styles.
+- assets/main.js handles navigation, WhatsApp and homepage selection prefills.
+- assets/data.js holds 31 indicative destination resources; assets/directory.js handles filtering.
+- The old root data.js/main.js/config.js and build.py are legacy, not the active site source. Do not regenerate production pages using build.py.
+- Verify current award details against official sources before adding deadlines or claiming a call is open.
+- When changing the responder URL, update assets/config.js and the no-JavaScript links/iframe in assessment.html together.
+
+## Validation performed
+
+Public form submission and confirmation tested without Google login. Email validation tested. Website source checked for internal links, section anchors, duplicate IDs, headings and JavaScript syntax. Live UI checks are performed after deployment. A clearly labelled test response may remain in the owner's Sheet.
